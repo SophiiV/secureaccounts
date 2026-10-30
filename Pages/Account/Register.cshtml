@@ -1,0 +1,64 @@
+@page
+@model SecureAccounts.Pages.Account.RegisterModel
+@{
+    ViewData["Title"] = "Реєстрація";
+}
+<div class="card auth-card mx-auto">
+    <div class="card-body p-4">
+        <h1 class="h4 mb-3">Реєстрація</h1>
+        <form method="post" novalidate>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="mb-3">
+                <label asp-for="Input.DisplayName" class="form-label"></label>
+                <input asp-for="Input.DisplayName" class="form-control" autocomplete="name" />
+                <span asp-validation-for="Input.DisplayName" class="text-danger small"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Input.Email" class="form-label">Email</label>
+                <input asp-for="Input.Email" class="form-control" autocomplete="username" />
+                <span asp-validation-for="Input.Email" class="text-danger small"></span>
+            </div>
+            <div class="mb-2">
+                <label asp-for="Input.Password" class="form-label"></label>
+                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" data-password-meter />
+                <div class="strength mt-2"><div id="strength-bar" class="strength-bar"></div></div>
+                <div id="strength-label" class="small text-muted mt-1"></div>
+            </div>
+            <ul class="rules small ps-1 mb-2">
+                <li data-rule="length">щонайменше 8 символів</li>
+                <li data-rule="upper">велика літера</li>
+                <li data-rule="lower">мала літера</li>
+                <li data-rule="digit">цифра</li>
+                <li data-rule="symbol">символ, що не є літерою чи цифрою</li>
+            </ul>
+            @if (Model.PasswordErrors.Count > 0)
+            {
+                <div class="alert alert-danger py-2 small">
+                    <strong>Пароль не відповідає політиці:</strong>
+                    <ul class="mb-0">
+                        @foreach (var e in Model.PasswordErrors)
+                        {
+                            <li>@e</li>
+                        }
+                    </ul>
+                </div>
+            }
+            <div class="mb-3">
+                <label asp-for="Input.ConfirmPassword" class="form-label"></label>
+                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" />
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Input.Captcha" class="form-label"></label>
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <img id="captcha-img" class="captcha-img" src="/captcha" width="200" height="64" alt="CAPTCHA" />
+                    <a href="#" id="captcha-refresh" class="small">Інша картинка</a>
+                </div>
+                <input asp-for="Input.Captcha" id="captcha-input" class="form-control" autocomplete="off" />
+                <span asp-validation-for="Input.Captcha" class="text-danger small"></span>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Зареєструватися</button>
+        </form>
+        <p class="small mt-3 mb-0">Уже маєте обліковий запис? <a asp-page="/Account/Login">Увійти</a></p>
+    </div>
+</div>

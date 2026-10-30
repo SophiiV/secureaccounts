@@ -1,0 +1,8 @@
+bin/
+obj/
+.vs/
+.idea/
+.DS_Store
+**/App_Data/
+tools/mailpit/
+appsettings.*.local.json

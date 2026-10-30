@@ -1,0 +1,30 @@
+@page
+@model SecureAccounts.Pages.Account.ActivateModel
+@{
+    ViewData["Title"] = "Активація облікового запису";
+}
+<div class="card auth-card mx-auto">
+    <div class="card-body p-4">
+        <h1 class="h4 mb-3">Активація облікового запису</h1>
+        @if (Model.CanActivate)
+        {
+            <p>Підтвердьте активацію облікового запису <strong>@Model.Email</strong>.</p>
+            <form method="post">
+                <input type="hidden" asp-for="Token" />
+                <button type="submit" class="btn btn-success w-100">Активувати обліковий запис</button>
+            </form>
+        }
+        else
+        {
+            <div class="alert @(Model.Success ? "alert-success" : "alert-danger")">@Model.Message</div>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <a class="btn btn-primary" asp-page="/Profile/Index">До профілю</a>
+            }
+            else
+            {
+                <a class="btn btn-primary" asp-page="/Account/Login">Увійти</a>
+            }
+        }
+    </div>
+</div>

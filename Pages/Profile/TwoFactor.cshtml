@@ -1,0 +1,48 @@
+@page
+@model SecureAccounts.Pages.Profile.TwoFactorModel
+@{
+    ViewData["Title"] = "Двофакторна автентифікація";
+}
+<div class="card card-wide mx-auto">
+    <div class="card-body p-4">
+        <h1 class="h4 mb-3">Двофакторна автентифікація (TOTP)</h1>
+        @if (Model.Error is not null)
+        {
+            <div class="alert alert-danger">@Model.Error</div>
+        }
+        @if (!Model.Me.IsActivated)
+        {
+            <div class="alert alert-warning">Спершу активуйте обліковий запис за посиланням з листа.</div>
+            <a class="btn btn-primary" asp-page="/Profile/Index">До профілю</a>
+        }
+        else if (Model.Me.TwoFactorEnabled)
+        {
+            <p><span class="badge text-bg-success">Увімкнено</span> Під час кожного входу після пароля система просить код із застосунку.</p>
+            <p>Щоб вимкнути 2FA, введіть поточний код:</p>
+            <form method="post" asp-page-handler="Disable" class="d-flex gap-2" novalidate>
+                <input asp-for="Code" class="form-control code-input" inputmode="numeric" autocomplete="one-time-code" maxlength="7" placeholder="000000" />
+                <button type="submit" class="btn btn-outline-danger">Вимкнути 2FA</button>
+            </form>
+        }
+        else
+        {
+            <ol>
+                <li>Встановіть на телефон Google Authenticator або Microsoft Authenticator.</li>
+                <li>Відскануйте QR-код або введіть ключ вручну.</li>
+                <li>Введіть 6-значний код, який покаже застосунок.</li>
+            </ol>
+            <div class="d-flex flex-wrap gap-4 align-items-center mb-3">
+                <img class="qr-img" src="@Model.QrDataUri" width="200" height="200" alt="QR-код для застосунку-автентифікатора" />
+                <div>
+                    <div class="small text-muted">Ключ для ручного введення:</div>
+                    <div class="secret-key">@Model.Secret</div>
+                    <div class="small text-muted mt-2">Тип: за часом, 6 цифр, 30 с</div>
+                </div>
+            </div>
+            <form method="post" asp-page-handler="Enable" class="d-flex gap-2" novalidate>
+                <input asp-for="Code" class="form-control code-input" inputmode="numeric" autocomplete="one-time-code" maxlength="7" placeholder="000000" autofocus />
+                <button type="submit" class="btn btn-primary">Увімкнути</button>
+            </form>
+        }
+    </div>
+</div>

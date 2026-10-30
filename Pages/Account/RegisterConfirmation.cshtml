@@ -1,0 +1,14 @@
+@page
+@{
+    ViewData["Title"] = "Перевірте пошту";
+    string email = Request.Query["email"].ToString();
+}
+<div class="card auth-card mx-auto">
+    <div class="card-body p-4">
+        <h1 class="h4 mb-3">Перевірте пошту</h1>
+        <p>Обліковий запис створено. На адресу <strong>@email</strong> надіслано лист з посиланням для активації.</p>
+        <p class="small text-muted">Посилання одноразове і має обмежений термін дії. До активації вхід можливий, але в профілі
+            буде позначка «Не активовано», а двофакторну автентифікацію ввімкнути не вийде.</p>
+        <a class="btn btn-primary" asp-page="/Account/Login">Перейти до входу</a>
+    </div>
+</div>

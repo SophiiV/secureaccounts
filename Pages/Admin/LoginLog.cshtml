@@ -1,0 +1,68 @@
+@page
+@model SecureAccounts.Pages.Admin.LoginLogModel
+@{
+    ViewData["Title"] = "Журнал входів";
+}
+<h1 class="h3 mb-3">Журнал входів</h1>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h2 class="h5">Хто намагався увійти і скільки разів</h2>
+        <table class="table table-sm mb-0">
+            <thead>
+            <tr><th>Email (як ввели)</th><th>Усього спроб</th><th>Невдалих</th><th>Успішних</th><th>Остання спроба</th><th>IP останньої спроби</th><th>Останній результат</th></tr>
+            </thead>
+            <tbody>
+            @foreach (var s in Model.Summaries)
+            {
+                <tr class="@(s.Failed > 0 ? "table-warning" : "")">
+                    <td>@s.Login</td>
+                    <td>@s.Total</td>
+                    <td>@s.Failed</td>
+                    <td>@s.Succeeded</td>
+                    <td>@Fmt.Local(s.Last)</td>
+                    <td class="small-mono">@s.LastIp</td>
+                    <td>@s.LastResult</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+            <h2 class="h5 mb-0">Усі спроби</h2>
+            <form method="get" class="d-flex gap-2 align-items-center">
+                <input asp-for="Login" class="form-control form-control-sm" placeholder="фільтр за email" />
+                <div class="form-check text-nowrap">
+                    <input asp-for="FailedOnly" class="form-check-input" />
+                    <label asp-for="FailedOnly" class="form-check-label small">лише невдалі</label>
+                </div>
+                <button type="submit" class="btn btn-sm btn-primary">Показати</button>
+            </form>
+        </div>
+        <table class="table table-sm small">
+            <thead>
+            <tr><th>Час</th><th>Email</th><th>IP</th><th>Спосіб</th><th>Результат</th><th>Браузер</th></tr>
+            </thead>
+            <tbody>
+            @foreach (var a in Model.Attempts)
+            {
+                <tr>
+                    <td class="text-nowrap">@Fmt.Local(a.Time)</td>
+                    <td>@a.Login</td>
+                    <td class="small-mono">@a.Ip</td>
+                    <td>@a.Method</td>
+                    <td><span class="badge @LoginResultInfo.Css(a.Result)">@LoginResultInfo.Label(a.Result)</span></td>
+                    <td class="text-muted text-truncate ua-cell" title="@a.UserAgent">@a.UserAgent</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+        <form method="post" asp-page-handler="Clear">
+            <button type="submit" class="btn btn-sm btn-outline-secondary">Очистити журнал</button>
+        </form>
+    </div>
+</div>

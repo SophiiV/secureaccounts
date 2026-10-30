@@ -1,0 +1,92 @@
+@page
+@model SecureAccounts.Pages.Profile.IndexModel
+@{
+    ViewData["Title"] = "Мій профіль";
+    var me = Model.Me;
+}
+<h1 class="h3 mb-4">Мій профіль</h1>
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="h5 mb-3">Обліковий запис</h2>
+                <table class="table table-sm mb-0">
+                    <tr><th class="w-50">Ім'я</th><td>@me.DisplayName</td></tr>
+                    <tr><th>Email</th><td>@me.Email</td></tr>
+                    <tr><th>Роль</th><td>@(me.Role == Roles.Admin ? "адміністратор" : "користувач")</td></tr>
+                    <tr>
+                        <th>Статус активації</th>
+                        <td>
+                            @if (me.IsActivated)
+                            {
+                                <span class="badge text-bg-success">Активовано</span>
+                                <span class="small text-muted">@Fmt.Local(me.ActivatedAt)</span>
+                            }
+                            else
+                            {
+                                <span class="badge text-bg-warning">Не активовано</span>
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Двофакторна автентифікація</th>
+                        <td>
+                            @if (me.TwoFactorEnabled)
+                            {
+                                <span class="badge text-bg-success">Увімкнено (TOTP)</span>
+                            }
+                            else
+                            {
+                                <span class="badge text-bg-secondary">Вимкнено</span>
+                            }
+                        </td>
+                    </tr>
+                    <tr><th>Вхід через Google</th><td>@(me.GoogleSubject is null ? "не прив'язано" : "прив'язано")</td></tr>
+                    <tr><th>Пароль</th><td>@(me.PasswordHash is null ? "не встановлено (лише вхід через Google)" : "встановлено, зберігається як хеш PBKDF2")</td></tr>
+                    <tr><th>Поточна сесія</th><td>вхід: @Model.LoginMethod</td></tr>
+                    <tr><th>Зареєстровано</th><td>@Fmt.Local(me.CreatedAt)</td></tr>
+                    <tr><th>Останній вхід</th><td>@Fmt.Local(me.LastLoginAt)</td></tr>
+                </table>
+            </div>
+        </div>
+        @if (!me.IsActivated)
+        {
+            <div class="alert alert-warning mt-3">
+                Обліковий запис не активовано. Перейдіть за посиланням з листа або надішліть лист ще раз.
+                <form method="post" asp-page-handler="ResendActivation" class="mt-2">
+                    <button type="submit" class="btn btn-sm btn-warning">Надіслати лист повторно</button>
+                </form>
+            </div>
+        }
+    </div>
+    <div class="col-lg-6">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2 class="h5">Двофакторна автентифікація</h2>
+                <p class="small text-muted">Після введення пароля система попросить 6-значний код із застосунку-автентифікатора.</p>
+                <a class="btn @(me.TwoFactorEnabled ? "btn-outline-danger" : "btn-primary")" asp-page="/Profile/TwoFactor">
+                    @(me.TwoFactorEnabled ? "Керувати / вимкнути 2FA" : "Увімкнути 2FA")
+                </a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <h2 class="h5">Останні спроби входу у ваш обліковий запис</h2>
+                <table class="table table-sm small mb-0">
+                    <thead><tr><th>Час</th><th>IP</th><th>Спосіб</th><th>Результат</th></tr></thead>
+                    <tbody>
+                    @foreach (var a in Model.RecentAttempts)
+                    {
+                        <tr>
+                            <td>@Fmt.Local(a.Time)</td>
+                            <td class="small-mono">@a.Ip</td>
+                            <td>@a.Method</td>
+                            <td><span class="badge @LoginResultInfo.Css(a.Result)">@LoginResultInfo.Label(a.Result)</span></td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

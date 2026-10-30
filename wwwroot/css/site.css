@@ -1,0 +1,19 @@
+html { font-size: 15px; }
+body { background: #f5f6f8; }
+main .card { border: 0; box-shadow: 0 1px 4px rgba(0, 0, 0, .08); }
+.auth-card { max-width: 480px; }
+.card-wide { max-width: 640px; }
+.captcha-img { border: 1px solid #ced4da; border-radius: .375rem; background: #fff; }
+.qr-img { border: 1px solid #dee2e6; border-radius: .375rem; background: #fff; }
+.secret-key { font-family: Consolas, monospace; letter-spacing: .08em; font-size: 1.05rem; }
+.code-input { font-family: Consolas, monospace; font-size: 1.4rem; letter-spacing: .3em; text-align: center; }
+.strength { height: 8px; border-radius: 4px; background: #e9ecef; overflow: hidden; }
+.strength-bar { height: 100%; width: 0; transition: width .2s, background-color .2s; }
+.rules li { list-style: none; }
+.rules li::before { content: "\2716"; color: #dc3545; margin-right: .4rem; }
+.rules li.ok::before { content: "\2714"; color: #198754; }
+.table-sm td, .table-sm th { vertical-align: middle; }
+.small-mono { font-family: Consolas, monospace; font-size: .85rem; }
+.btn-google { background: #fff; border: 1px solid #dadce0; color: #3c4043; }
+.btn-google:hover { background: #f8f9fa; }
+.ua-cell { max-width: 260px; }

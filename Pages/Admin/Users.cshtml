@@ -1,0 +1,63 @@
+@page
+@model SecureAccounts.Pages.Admin.UsersModel
+@{
+    ViewData["Title"] = "Користувачі";
+}
+<h1 class="h3 mb-3">Користувачі</h1>
+<div class="card">
+    <div class="card-body">
+        <table class="table table-sm table-hover mb-0">
+            <thead>
+            <tr>
+                <th>ID</th><th>Email</th><th>Ім'я</th><th>Роль</th><th>Активація</th><th>2FA</th><th>Google</th>
+                <th>Статус</th><th>Невдалих входів за 24 год</th><th>Останній вхід</th><th></th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var u in Model.Users)
+            {
+                bool locked = u.LockoutEnd is { } end && end > DateTime.UtcNow;
+                <tr>
+                    <td>@u.Id</td>
+                    <td>@u.Email</td>
+                    <td>@u.DisplayName</td>
+                    <td>@(u.Role == Roles.Admin ? "адміністратор" : "користувач")</td>
+                    <td>@(u.IsActivated ? "так" : "ні")</td>
+                    <td>@(u.TwoFactorEnabled ? "так" : "ні")</td>
+                    <td>@(u.GoogleSubject is null ? "ні" : "так")</td>
+                    <td>
+                        @if (u.IsBlocked)
+                        {
+                            <span class="badge text-bg-danger">Заблоковано адміністратором</span>
+                        }
+                        else if (locked)
+                        {
+                            <span class="badge text-bg-warning">Тимчасово заблоковано до @Fmt.LocalTime(u.LockoutEnd!.Value)</span>
+                        }
+                        else
+                        {
+                            <span class="badge text-bg-success">Активний</span>
+                        }
+                    </td>
+                    <td>@(Model.FailedLast24h.GetValueOrDefault(u.Id))</td>
+                    <td class="small">@Fmt.Local(u.LastLoginAt)</td>
+                    <td class="text-end text-nowrap">
+                        @if (u.IsBlocked || locked)
+                        {
+                            <form method="post" asp-page-handler="Unblock" asp-route-id="@u.Id" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-success">Розблокувати</button>
+                            </form>
+                        }
+                        @if (!u.IsBlocked && u.Id != Model.MyId)
+                        {
+                            <form method="post" asp-page-handler="Block" asp-route-id="@u.Id" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Заблокувати</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,30 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Головна";
+}
+<div class="row">
+    <div class="col-lg-8">
+        <h1 class="h3 mb-3">Безпечна система управління обліковими записами</h1>
+        <p class="lead">Реєстрація, вхід і керування доступом з захистом від типових атак на автентифікацію.</p>
+        <ul class="list-group mb-4">
+            <li class="list-group-item">Політика паролів і зберігання паролів у вигляді хешу PBKDF2-HMAC-SHA256 (600 000 ітерацій, випадкова сіль)</li>
+            <li class="list-group-item">CAPTCHA під час реєстрації</li>
+            <li class="list-group-item">Активація облікового запису через одноразове посилання в листі</li>
+            <li class="list-group-item">Тимчасове блокування після 5 невдалих спроб входу і журнал спроб для адміністратора</li>
+            <li class="list-group-item">Двофакторна автентифікація TOTP (Google Authenticator, Microsoft Authenticator)</li>
+            <li class="list-group-item">Вхід через Google (OpenID Connect)</li>
+            <li class="list-group-item">Відновлення пароля через email з одноразовим токеном</li>
+            <li class="list-group-item">Розмежування доступу за ролями: користувач і адміністратор</li>
+        </ul>
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <a class="btn btn-primary" asp-page="/Profile/Index">Перейти до профілю</a>
+        }
+        else
+        {
+            <a class="btn btn-primary me-2" asp-page="/Account/Login">Увійти</a>
+            <a class="btn btn-outline-primary" asp-page="/Account/Register">Зареєструватися</a>
+        }
+    </div>
+</div>

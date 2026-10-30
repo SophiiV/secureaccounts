@@ -1,0 +1,73 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SecureAccounts</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+@{
+    bool signedIn = User.Identity?.IsAuthenticated == true;
+    bool isAdmin = User.IsInRole(Roles.Admin);
+}
+<header>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand fw-semibold" asp-page="/Index">&#128274; SecureAccounts</a>
+            <ul class="navbar-nav me-auto">
+                @if (signedIn)
+                {
+                    <li class="nav-item"><a class="nav-link" asp-page="/Profile/Index">Мій профіль</a></li>
+                    @if (isAdmin)
+                    {
+                        <li class="nav-item"><a class="nav-link" asp-page="/Admin/Users">Користувачі</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-page="/Admin/LoginLog">Журнал входів</a></li>
+                    }
+                }
+            </ul>
+            <ul class="navbar-nav">
+                @if (signedIn)
+                {
+                    <li class="nav-item">
+                        <span class="navbar-text me-3">
+                            @User.Identity!.Name
+                            <span class="badge @(isAdmin ? "text-bg-danger" : "text-bg-secondary")">@(isAdmin ? "адміністратор" : "користувач")</span>
+                        </span>
+                    </li>
+                    <li class="nav-item">
+                        <form method="post" asp-page="/Account/Logout" class="d-inline">
+                            <button type="submit" class="btn btn-outline-light btn-sm mt-1">Вийти</button>
+                        </form>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item"><a class="nav-link" asp-page="/Account/Login">Увійти</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-page="/Account/Register">Реєстрація</a></li>
+                }
+            </ul>
+        </div>
+    </nav>
+</header>
+<div class="container">
+    <main role="main" class="pb-4">
+        @if (TempData["Status"] is string status)
+        {
+            <div class="alert alert-success">@status</div>
+        }
+        @if (TempData["Error"] is string error)
+        {
+            <div class="alert alert-danger">@error</div>
+        }
+        @RenderBody()
+    </main>
+</div>
+<footer class="border-top text-muted py-3 small">
+    <div class="container">SecureAccounts - безпечна система управління обліковими записами, 2026</div>
+</footer>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

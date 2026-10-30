@@ -1,0 +1,12 @@
+@page
+@{
+    ViewData["Title"] = "Доступ заборонено";
+    Response.StatusCode = 403;
+}
+<div class="card auth-card mx-auto">
+    <div class="card-body p-4">
+        <h1 class="h4 mb-3 text-danger">403 - доступ заборонено</h1>
+        <p>Ця сторінка доступна лише адміністраторам. Ваша роль: <strong>@(User.IsInRole(Roles.Admin) ? "адміністратор" : "користувач")</strong>.</p>
+        <a class="btn btn-primary" asp-page="/Profile/Index">До свого профілю</a>
+    </div>
+</div>
